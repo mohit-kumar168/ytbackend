@@ -7,15 +7,17 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (localFilePath, folder = "ytbackend") => {
     try {
         if (!localFilePath) return null;
 
         // Info: Uploading a file to Cloudinary
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto",
+            folder: folder,
         });
-        console.log("File uploaded on Cloudinary successfully: ", response.url);
+        // console.log("File uploaded on Cloudinary successfully: ", response.url);
+        fs.unlinkSync(localFilePath);
 
         return response;
     } catch (error) {
