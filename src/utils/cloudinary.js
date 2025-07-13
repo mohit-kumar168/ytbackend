@@ -27,4 +27,24 @@ const uploadOnCloudinary = async (localFilePath, folder = "ytbackend") => {
     }
 };
 
-export { uploadOnCloudinary };
+const removeFromCloudinary = async (cloudinaryUrl, resourceType = "image") => {
+    try {
+        if (!cloudinaryUrl) return null;
+        const parts = cloudinaryUrl.split("/");
+        const uploadIndex = parts.findIndex((part) => part === "upload");
+        const pathAfterUpload = parts.slice(uploadIndex + 1).join("/");
+        const lastDotIndex = pathAfterUpload.lastDotOf(".");
+        const publicId = pathAfterUpload.substring(0, lastDotIndex);
+
+        const response = await cloudinary.uploader.destroy(publicId, {
+            resource_type: resourceType,
+        });
+
+        return response;
+    } catch (error) {
+        console.error("Error deleting from Cloudinary:", error);
+        return null;
+    }
+};
+
+export { uploadOnCloudinary, removeFromCloudinary };

@@ -1,7 +1,10 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { apiError } from "../utils/apiError.js";
 import { User } from "../models/user.models.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+    uploadOnCloudinary,
+    removeFromCloudinary,
+} from "../utils/cloudinary.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
 
@@ -283,6 +286,8 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
         { new: true }
     ).select("-password");
 
+    await removeFromCloudinary(req.user?.avatar);
+
     return res.status(200).json(200, user, "Avatar updated successfully");
 });
 
@@ -307,6 +312,8 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
         },
         { new: true }
     ).select("-password");
+
+    await removeFromCloudinary(req.user?.coverImage);
 
     return res.status(200).json(200, user, "Cover Image updated successfully");
 });
